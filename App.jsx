@@ -1,8 +1,26 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ShoppingBag, Play } from "lucide-react";
+
+// Minimal UI components
+function Card({ children, className }) {
+  return <div className={`bg-gray-800 rounded-xl ${className}`}>{children}</div>;
+}
+
+function CardContent({ children, className }) {
+  return <div className={className}>{children}</div>;
+}
+
+function Button({ children, className, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-xl font-semibold transition ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
 
 const sampleMovies = [
   { id: 1, title: "Inception", poster: "/posters/inception.jpg" },
@@ -16,8 +34,8 @@ const sampleStore = [
 ];
 
 export default function PlexSite() {
-  const [movies, setMovies] = useState(sampleMovies);
-  const [store, setStore] = useState(sampleStore);
+  const [movies] = useState(sampleMovies);
+  const [store] = useState(sampleStore);
   const [selected, setSelected] = useState(null);
 
   return (
@@ -27,19 +45,20 @@ export default function PlexSite() {
       {/* Movies */}
       <section className="mb-12">
         <h2 className="text-2xl mb-4">Now Streaming</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {movies.map((movie) => (
             <motion.div
               key={movie.id}
-              whileHover={{ scale: 1.05, rotateY: 10 }}
-              className="cursor-pointer relative group"
+              whileHover={{ scale: 1.05 }}
+              className="cursor-pointer"
               onClick={() => setSelected(movie)}
             >
-              <Card className="overflow-hidden rounded-2xl shadow-lg bg-gray-800 transition-all">
-                <img src={movie.poster} alt={movie.title} className="w-full h-64 object-cover" />
-                <CardContent className="p-2 text-center">{movie.title}</CardContent>
+              <Card className="overflow-hidden shadow-lg">
+                <img src={movie.poster} alt={movie.title} className="w-full h-80 object-cover" />
+                <CardContent className="p-4">
+                  <h3 className="text-lg font-semibold">{movie.title}</h3>
+                </CardContent>
               </Card>
-              <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition shadow-[0_0_30px_5px_rgba(56,189,248,0.7)]" />
             </motion.div>
           ))}
         </div>
@@ -47,23 +66,24 @@ export default function PlexSite() {
 
       {/* Store */}
       <section>
-        <h2 className="text-2xl mb-4 flex items-center gap-2"><ShoppingBag /> Store</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <h2 className="text-2xl mb-4">Store</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {store.map((item) => (
-            <motion.div
-              key={item.id}
-              whileHover={{ scale: 1.05, rotateY: 10 }}
-              className="cursor-pointer relative group"
-            >
-              <Card className="overflow-hidden rounded-2xl shadow-lg bg-gray-800 transition-all">
-                <img src={item.image} alt={item.name} className="w-full h-48 object-cover" />
-                <CardContent className="p-4 flex flex-col items-center text-center">
-                  <h3 className="text-lg font-semibold">{item.name}</h3>
-                  <p className="text-xl mb-3">{item.price}</p>
-                  <Button className="bg-green-500 hover:bg-green-600" onClick={() => window.open("https://t.me/ogadm1n", "_blank")}>Contact on Telegram</Button>
+            <motion.div key={item.id} whileHover={{ scale: 1.05 }}>
+              <Card className="overflow-hidden shadow-lg">
+                <img src={item.image} alt={item.name} className="w-full h-64 object-cover" />
+                <CardContent className="p-4 flex justify-between items-center">
+                  <div>
+                    <h3 className="text-lg font-semibold">{item.name}</h3>
+                    <p className="text-gray-400">{item.price}</p>
+                  </div>
+                  <a href="https://t.me/ogadm1n" target="_blank" rel="noopener noreferrer">
+                    <Button className="bg-blue-500 hover:bg-blue-600 flex items-center gap-2">
+                      <ShoppingBag className="w-4 h-4" /> Contact
+                    </Button>
+                  </a>
                 </CardContent>
               </Card>
-              <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition shadow-[0_0_30px_5px_rgba(56,189,248,0.7)]" />
             </motion.div>
           ))}
         </div>
@@ -71,18 +91,20 @@ export default function PlexSite() {
 
       {/* Movie Modal */}
       {selected && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-gray-900 rounded-2xl shadow-xl p-6 max-w-lg w-full"
-          >
-            <img src={selected.poster} alt={selected.title} className="rounded-xl mb-4" />
-            <h3 className="text-2xl mb-4">{selected.title}</h3>
-            <Button className="bg-blue-500 hover:bg-blue-600" onClick={() => alert("Playing movie...")}> <Play className="mr-2" /> Play</Button>
-            <Button variant="ghost" className="mt-4 text-red-400" onClick={() => setSelected(null)}>Close</Button>
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+          onClick={() => setSelected(null)}
+        >
+          <div className="bg-gray-900 rounded-xl p-6 max-w-lg w-full">
+            <h2 className="text-2xl font-bold mb-4">{selected.title}</h2>
+            <img src={selected.poster} alt={selected.title} className="rounded-lg mb-4" />
+            <Button className="bg-green-500 hover:bg-green-600 flex items-center gap-2">
+              <Play className="w-4 h-4" /> Play Now
+            </Button>
+          </div>
+        </motion.div>
       )}
     </div>
   );

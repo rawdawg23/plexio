@@ -33,14 +33,11 @@ A custom Plex movie server website with **3D animated movie posters**, **neon gl
    ```
 
 ## 📦 Deployment
-You can deploy this site easily on:
-
-- [Vercel](https://vercel.com/)
-
-- [Netlify](https://www.netlify.com/)
+Includes GitHub Actions workflows for:
 
 - GitHub Pages
-
+- Vercel
+- Netlify
 
 ## 🛒 Store Contact
 For store inquiries, contact on Telegram: [@ogadm1n](https://t.me/ogadm1n)
